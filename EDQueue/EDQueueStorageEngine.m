@@ -22,9 +22,18 @@
     self = [super init];
     if (self) {
         // Database path
-        NSArray *paths                  = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask,YES);
-        NSString *documentsDirectory    = [paths objectAtIndex:0];
-        NSString *path                  = [documentsDirectory stringByAppendingPathComponent:@"edqueue_0.5.0d.db"];
+        NSArray *paths                  = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask,YES);
+        NSString *appSupportDirectory    = [paths objectAtIndex:0];
+        NSString *path                  = [appSupportDirectory stringByAppendingPathComponent:@"edqueue_0.5.0d.db"];
+        
+        NSFileManager *manager = [NSFileManager defaultManager];
+        if(![manager fileExistsAtPath:appSupportDirectory]) {
+            __autoreleasing NSError *error;
+            BOOL ret = [manager createDirectoryAtPath:appSupportDirectory withIntermediateDirectories:NO attributes:nil error:&error];
+            if(!ret) {
+                NSLog(@"ERROR app support: %@", error);
+            }
+        }
         
         // Allocate the queue
         _queue                          = [[FMDatabaseQueue alloc] initWithPath:path];
